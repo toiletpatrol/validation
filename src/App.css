@@ -1,0 +1,105 @@
+::-webkit-input-placeholder {
+  color: #999;
+}
+::-moz-placeholder {
+  color: #999;
+}
+:-ms-input-placeholder {
+  color: #999;
+}
+:-moz-placeholder {
+  color: #999;
+}
+
+input, textarea, button, select {
+  display: block;
+
+  padding: 0 8px;
+  line-height: 32px;
+  height: 32px;
+  width: 100%;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  border: 2px solid black;
+  outline: none;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input, textarea, select {
+  background: white;
+  color: black;
+}
+
+input:focus, textarea:focus, button:focus, select:focus {
+  border-color: blue;
+}
+
+button, select {
+  cursor: pointer;
+}
+
+button {
+  background: black;
+  color: white;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #222;
+}
+
+button:active {
+  background: black;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+}
+
+input {
+
+}
+
+.App {
+  padding: 34px 34px 55px;
+  max-width: 400px;
+}
+
+/* Form item */
+.form__item {
+  margin-top: 13px;
+  margin-bottom: 8px;
+}
+
+.form__item:first-child {
+  margin-top: 0;
+}
+
+.form__item:last-child {
+  margin-bottom: 0;
+}
+
+.form__item_submit {
+  margin-top: 21px;
+}
+
+.form__item_error {
+  color: red;
+}
+
+.form__item_error input,
+.form__item_error textarea,
+.form__item_error select {
+  border-color: red;
+}
+
+/* Error Message */
+.error {
+  margin-top: 5px;
+  font-size: 12px;
+}
