@@ -1,6 +1,6 @@
 # Install & Start
 
 ```
-yarn install
+yarn
 yarn start
 ```
