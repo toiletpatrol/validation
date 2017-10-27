@@ -7,7 +7,7 @@ let validateName = function(string) {
     Возможно, не самый очевидный способ, но точно проще, чем любая другая
     регулярка.
    */
-  if (string.replace(/\s/g, '').replace(/[a-z]/gi, '')) {
+  if (!string || string.replace(/\s/g, '').replace(/[a-z]/gi, '')) {
     errors.push(`Only latin letters are allowed. Example: John Doe`);
   }
 
@@ -29,7 +29,7 @@ let validatePhoneNumber = function(string) {
     Сейчас в Москве это вообще невозможно, во всей остальной части России
     в мобильных сетях тоже. То есть как бы скобочки не надо использовать.
    */
-  if (!re.test(string.replace(/\s/gi, '').replace(/-/gi, ''))) {
+  if (!string || !re.test(string.replace(/\s/gi, '').replace(/-/gi, ''))) {
     errors.push(`Only digits, spaces, '-' and '+' signs are allowed. Number should contain 11 digits. Example: +7 999 123-45-67`);
   }
 
@@ -47,7 +47,7 @@ let validateEmail = function(string) {
    */
   let re = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/i;
 
-  if (!re.test(string)) {
+  if (!string || !re.test(string)) {
     errors.push(`Check this email. Example: test@mail.ru`);
   }
 
