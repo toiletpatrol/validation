@@ -5,12 +5,9 @@
 
 /* Status */
 .form__status {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  margin-top: -16px;
   width: 32px;
   height: 32px;
+  margin-left: 34px;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;

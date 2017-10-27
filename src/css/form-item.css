@@ -13,8 +13,9 @@
 }
 
 .form-item_submit {
+  display: flex;
+  align-items: center;
   margin-top: 21px;
-  position: relative;
 }
 
 /* Error Item */
