@@ -9,7 +9,7 @@ class App extends PureComponent {
   render() {
     return (
       <div className="app">
-        <h1>Form Validation Example</h1>
+        <h1>Form Validation</h1>
         <Form />
       </div>
     );
