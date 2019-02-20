@@ -1,21 +1,28 @@
-import React, { Component } from 'react';
-import './css/form-item.css';
+import React from "react";
+import "./css/form-item.css";
 
-/*
-  Компонент оборачивает полученный элемент формы,
-  при наличии показывает ошибки и добавляет лейбл
+/**
+ * Компонент оборачивает полученный элемент формы,
+ * при наличии показывает ошибки и добавляет лейбл
  */
-export default class FormItem extends Component {
-  render() {
-    let errors = this.props.errors.map((v, i) => <p className="form-item__error" key={`error-${i}`}>{v}</p>);
-    let label = this.props.label ? (<label htmlFor="fullname">{this.props.label}</label>) : null;
+export const FormItem = (props) => {
+  const { label, errors, children } = props;
+  const className = `form-item${errors.length ? " form-item_error" : ""}`;
 
-    return (
-      <div className={`form-item${this.props.errors.length ? ' form-item_error' : ''}`}>
-        {label}
-        {this.props.children}
-        {errors}
-      </div>
-    );
-  }
-}
+
+  return (
+    <div className={className}>
+      {/** Лейбл */}
+      {Boolean(label) && (<label htmlFor="name">{label}</label>)}
+
+      {children}
+
+      {/** Ошибки */}
+      {Boolean(errors.length) && errors.map((v, i) => {
+        return (<p className="form-item__error" key={i}>{v}</p>);
+      })}
+    </div>
+  );
+};
+
+export default FormItem;

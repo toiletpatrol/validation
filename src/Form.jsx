@@ -1,137 +1,174 @@
-import React, { Component } from 'react';
-import FormItem from './FormItem.jsx';
-import validate from './validation.js';
-import './css/form.css';
+import React, { Component } from "react";
+import FormItem from "./FormItem";
+import validate from "./validation";
+import "./css/form.css";
 
+const CLEAR_STATE = {
+  data: {
+    name: "",
+    email: "",
+    phone: "",
+    skills: "middle"
+  },
+
+  errors: {
+    name: [],
+    email: [],
+    phone: [],
+    skills: []
+  },
+
+  status: "unknown"
+};
+
+/**
+ * Кастомная форма, не какая-нибудь общая, просто названия
+ * получше не придумал
+ */
 class Form extends Component {
-  constructor(props) {
-    super(props);
+  state = CLEAR_STATE;
 
-    // Можно биндить на месте, но я предпочитаю делать
-    // это в конструкторе. Другие хендлеры пришлось биндить на месте,
-    // потому что они общие для разных полей, и там пришлось указывать
-    // название поля
-    this.handleSubmit = this.handleSubmit.bind(this);
-
-    // Дефолтный стейт
-    this.state = {
-      data: {
-        name: 'Vasiliy Mamaevskiy',
-        email: 'paperpepper@gmail.com',
-        phone: '+7 926 258-22-26',
-        skills: 'middle'
-      },
-
-      errors: {
-        name: [],
-        email: [],
-        phone: [],
-        skills: []
-      },
-
-      status: 'unknown'
-    };
-  }
-
-  /*
-    Обработчик изменения значения какого-либо из полей
+  /**
+   * Обработчик изменения значения какого-либо из полей
    */
-  handleFieldChange(field, event) {
-    // Копируем стейт
-    let newState = JSON.parse(JSON.stringify(this.state));
+  handleFieldChange = (event) => {
+    const { target: { name, value } } = event;
+    const { data: srcData, errors: srcErrors } = this.state;
 
-    // Готовим новый стейт:
-    // 1) запоминаем значение поля
-    newState.data[field] = event.target.value;
+    const data = { ...srcData };
+    const errors = { ...srcErrors };
 
-    // 2) сбрасываем ошибки поля (потому что значение поля изменилось,
-    // и соответственно результаты валидации больше не имеют смысла)
-    newState.errors[field] = [];
+    /** Обновляем data для нового стейта: */
+    data[name] = value;
 
-    // 3) обнуляем стаус валидации (потому что аналогично п. 2)
-    newState.status = 'unknown';
+    /**
+     * Cбрасываем ошибки поля (потому что значение поля изменилось,
+     * и соответственно результаты валидации больше не имеют смысла).
+     * По этой же причине сбрасываем стаус валидации
+     */
+    errors[name] = [];
 
-    // Меджим новый стейт со старым
-    this.setState(newState);
-  }
+    this.setState({
+      data,
+      errors,
+      status: "unknown"
+    });
+  };
 
-  /*
-    Метод валидирует имеющиеся значения, собирает ошибки,
-    пихает их в стейт, возращает:
-
-    `true` если нет ошибок ни в одном поле,
-    `false` если есть хотя бы одна ошибка в одном из полей
-
-    TODO: Еще я забыл сделать нормальную проверку на пустые значения, пожалуй,
-    я бы вынес ее отдельно куда-то сюда.
+  /**
+   * Метод валидирует имеющиеся значения, собирает ошибки,
+   * отправляет их в стейт, а также обновляет status:
    */
-  validateForm() {
-    let errors = {
-      name: validate['name'](this.state.data.name),
-      phone: validate['phone'](this.state.data.phone),
-      email: validate['email'](this.state.data.email),
-      skills: validate['skills'](this.state.data.skills)
-    };
+  validateForm = () => {
+    const { data } = this.state;
+    const errors = {};
+    let status = "valid";
 
-    this.setState({errors});
+    Object.keys(data).forEach((field) => {
+      const value = data[field];
+      errors[field] = validate[field](value);
 
-    return ![].concat(errors.name, errors.email, errors.phone, errors.skills).length;
-  }
+      if (Boolean(errors[field].length)) {
+        status = "invalid";
+      }
+    });
 
-  /*
-    Обработчик нопки `Submit`. Вызывает общий валидатор формы,
-    меняет состояние стейта и при удачном раскладе выводит
-    собранные данные в консоль
+    this.setState({ errors, status });
+  };
+
+  /**
+   * Обработчик кнопки `Submit`. Вызывает валидатор формы
    */
-  handleSubmit() {
-    let isValid = this.validateForm();
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.validateForm();
+  };
 
-    if (isValid) {
-      this.setState({status: 'valid'});
-      console.log(this.state.data);
-    } else {
-      this.setState({status: 'invalid'});
-    }
-  }
+  /**
+   * Обработчик кнопки `Reset`. Сбрасывает форму
+   */
+  handleReset = (e) => {
+    e.preventDefault();
+    this.setState(CLEAR_STATE);
+  };
 
   render() {
-    let status = null;
-
-    // Это маленький смайлик рядом с кнопкой `submit`
-    if (this.state.status !== 'unknown') {
-      status = (
-        <div className={`form__status form__status_${this.state.status}`}></div>
-      );
-    }
+    const {data, errors, status } = this.state;
+    const showSmiley = status !== "unknown";
 
     return (
-      <div className="form">
-        <FormItem errors={this.state.errors.name} label="Full Name">
-          <input id="fullname" type="text" name="fullname" placeholder="Vasiliy Mamaevskiy" defaultValue={this.state.data.name} onChange={this.handleFieldChange.bind(this, 'name')} />
+      <form className="form" onSubmit={this.handleSubmit}>
+        <FormItem errors={errors.name} label="Full Name">
+          <input
+            id="name"
+            type="text"
+            name="name"
+            placeholder="John Doe"
+            value={data.name}
+            onChange={this.handleFieldChange}
+          />
         </FormItem>
 
-        <FormItem errors={this.state.errors.email} label="Email">
-          <input id="email" type="text" name="email" placeholder="test@mail.ru" defaultValue={this.state.data.email} onChange={this.handleFieldChange.bind(this, 'email')} />
+        <FormItem errors={errors.email} label="Email">
+          <input
+            id="email"
+            type="text"
+            name="email"
+            placeholder="example@example.com"
+            value={data.email}
+            onChange={this.handleFieldChange}
+          />
         </FormItem>
 
-        <FormItem errors={this.state.errors.phone} label="Phone">
-          <input id="phone" type="text" name="phone" placeholder="+7 926 258-22-26" defaultValue={this.state.data.phone} onChange={this.handleFieldChange.bind(this, 'phone')} />
+        <FormItem errors={errors.phone} label="Phone">
+          <input
+            id="phone"
+            type="text"
+            name="phone"
+            placeholder="+7 XXX XXX-XX-XX"
+            value={data.phone}
+            onChange={this.handleFieldChange}
+          />
         </FormItem>
 
-        <FormItem errors={this.state.errors.skills} label="Skills">
-          <select name="skills" id="skills" defaultValue={this.state.data.skills} onChange={this.handleFieldChange.bind(this, 'skills')}>
+        <FormItem errors={errors.skills} label="Skills">
+          <select
+            name="skills"
+            id="skills"
+            value={data.skills}
+            onChange={this.handleFieldChange}
+          >
             <option value="senior">Senior</option>
             <option value="middle">Middle</option>
             <option value="junior">Junior</option>
-            <option value="asshole">Asshole</option>
+            <option value="idk">I don't know</option>
           </select>
         </FormItem>
 
+        {/** Кнопки */}
         <div className="form-item form-item_submit">
-          <button className="form__submit-button" onClick={this.handleSubmit}>Submit</button>
-          {status}
+          {/** Кнока `Submit` */}
+          <button
+            className="form__submit-button"
+            onClick={this.handleSubmit}
+          >
+            Submit
+          </button>
+
+          {/** Маленький смайлик рядом с кнопкой - результат валидации */}
+          {showSmiley && (
+            <div className={`form__status form__status_${status}`} />
+          )}
+
+          {/** Кнопка `Reset` */}
+          <button
+            className="form__reset-button"
+            onClick={this.handleReset}
+          >
+            Reset
+          </button>
         </div>
-      </div>
+      </form>
     );
   }
 }

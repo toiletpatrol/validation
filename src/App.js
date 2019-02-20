@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
-import Form from './Form.jsx';
-import './css/app.css';
+import React, { PureComponent } from "react";
+import Form from "./Form";
+import "./css/app.css";
 
 /*
-  Немного бессмысленный компонент. Но мне кажется, что заголовок,
-  не относится к форме.
+ * App - всему голова
  */
-class App extends Component {
+class App extends PureComponent {
   render() {
     return (
       <div className="app">
